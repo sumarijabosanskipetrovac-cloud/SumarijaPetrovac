@@ -65,6 +65,19 @@
     <script src="notifications.js" defer></script>
 
     <script>
+        // Fix CORS: Google Apps Script redirects to auth if cookies are sent.
+        // Intercept all fetch calls to script.google.com and force credentials: 'omit'.
+        (function() {
+            const _fetch = window.fetch;
+            window.fetch = function(url, options) {
+                const urlStr = typeof url === 'string' ? url : (url && url.url) || '';
+                if (urlStr.includes('script.google.com')) {
+                    options = Object.assign({ credentials: 'omit' }, options);
+                }
+                return _fetch.call(this, url, options);
+            };
+        })();
+
         let chartJsLoaded = false;
         window.loadChartJs = function() {
             return new Promise((resolve, reject) => {
