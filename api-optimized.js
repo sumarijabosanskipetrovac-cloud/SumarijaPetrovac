@@ -9,7 +9,7 @@
 // API CONFIGURATION
 // ========================================
 
-const API_BASE_URL = 'https://script.google.com/macros/s/AKfycbx1Ci7VqlZf6rD9j1c-u6J7L-xjBVOcrH9qe94-KmXblMQV7f5yipAhbOLpkgaODzg/exec';
+const API_BASE_URL = 'https://script.google.com/macros/s/AKfycbz0hIRdUYQH0P8ioGRWV0U-juFyAXtlDngirNiq3XFIznDjjWk8S1iljjudomytnyQG/exec';
 const API_TIMEOUT = 30000; // 30 sekundi
 
 // ========================================

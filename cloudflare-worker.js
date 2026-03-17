@@ -3,7 +3,7 @@
 // i automatski dodaje CORS header-e kako bi frontend mogao komunicirati sa backend-om
 
 // 🔧 KONFIGURIŠI OVAJ URL SA SVOJIM APPS SCRIPT DEPLOYMENT URL-om
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1Ci7VqlZf6rD9j1c-u6J7L-xjBVOcrH9qe94-KmXblMQV7f5yipAhbOLpkgaODzg/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz0hIRdUYQH0P8ioGRWV0U-juFyAXtlDngirNiq3XFIznDjjWk8S1iljjudomytnyQG/exec';
 
 // 🌐 CORS konfiguriši dozvoljene domene (ili '*' za sve)
 const ALLOWED_ORIGINS = [
