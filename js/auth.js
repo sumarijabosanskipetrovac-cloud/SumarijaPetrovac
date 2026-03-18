@@ -17,18 +17,9 @@
             try {
                 const loginUrl = `${API_URL}?path=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
 
-                // Cloudflare Worker handles CORS - plain fetch works on all devices
-                const ctrl = new AbortController();
-                const timer = setTimeout(() => ctrl.abort(), 15000);
-                let data;
-                try {
-                    const r = await fetch(loginUrl, { signal: ctrl.signal });
-                    clearTimeout(timer);
-                    data = await r.json();
-                } catch (err) {
-                    clearTimeout(timer);
-                    throw err;
-                }
+                // fetch() automatski ima fallback: Worker → JSONP (vidi index.html interceptor)
+                const r = await fetch(loginUrl);
+                const data = await r.json();
 
                 if (data.success) {
                     currentUser = data;
