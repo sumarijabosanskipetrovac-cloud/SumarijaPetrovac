@@ -79,10 +79,18 @@
                     errorMsg.classList.remove('hidden');
                 }
             } catch (error) {
-                const isTimeout = error.message && (error.message.includes('timeout') || error.message.includes('odgovara'));
-                errorMsg.innerHTML = (isTimeout
-                    ? 'Server ne odgovara. Provjerite internet vezu.'
-                    : 'Greška pri prijavi: ' + error.message)
+                // AggregateError (Promise.any all failed) - extract individual errors
+                let displayMsg;
+                if (error.errors && error.errors.length) {
+                    const msgs = error.errors.map(e => e && e.message || String(e)).join(' | ');
+                    console.error('[LOGIN] All approaches failed:', msgs, error.errors);
+                    displayMsg = 'Server nije dostupan. ' + msgs;
+                } else {
+                    const isTimeout = error.message && (error.message.includes('timeout') || error.message.includes('odgovara'));
+                    displayMsg = isTimeout ? 'Server ne odgovara. Provjerite internet vezu.' : 'Greška pri prijavi: ' + error.message;
+                    console.error('[LOGIN] Error:', error.message, error);
+                }
+                errorMsg.innerHTML = displayMsg
                     + ' <button onclick="document.getElementById(\'login-form\').dispatchEvent(new Event(\'submit\'))" style="margin-left:8px;background:#166534;color:white;border:none;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:13px;">Pokušaj ponovo</button>';
                 errorMsg.classList.remove('hidden');
             } finally {
