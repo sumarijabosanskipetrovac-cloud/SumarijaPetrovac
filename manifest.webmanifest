@@ -1,7 +1,7 @@
 {
-  "name": "Šumarija Bos. Krupa",
-  "short_name": "Šumarija",
-  "description": "Aplikacija za upravljanje šumarstvom - Šumarija Bosanska Krupa",
+  "name": "Šumarija Bos. Petrovac",
+  "short_name": "Šumarija BP",
+  "description": "Aplikacija za upravljanje šumarstvom - Šumarija Bosanski Petrovac",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
