@@ -78,6 +78,35 @@
         .loading { text-align: center; padding: 60px 20px; }
         .loading-icon { font-size: 48px; margin-bottom: 16px; }
         .loading-text { font-size: 18px; color: #374151; font-weight: 600; }
+        .loading-splash {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 9999;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .splash-image {
+            position: absolute;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+        .splash-loading-text {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
         .loading-sub { font-size: 14px; color: #6b7280; margin-top: 8px; }
         .hidden { display: none; }
         .chart-container { margin-top: 20px; }
