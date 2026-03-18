@@ -65,10 +65,9 @@
     <script src="js/notifications.js" defer></script>
 
     <script>
-        // Smart API fetch: Worker first, JSONP fallback to Google Apps Script
+        // JSONP fetch - direktno na Google Apps Script (bez Cloudflare)
         (function() {
-            var WORKER_HOST = 'sumarijapetrovac.sumarijabosanskipetrovac.workers.dev';
-            var DIRECT_URL = 'https://script.google.com/macros/s/AKfycbyfAJJ-8rmOKcUKPLT3-yvV1V5DIYDL4M_hp6bcDDpXCdfzRc_LAUoGlz8zr6CPfa88/exec';
+            var GAS_URL = 'https://script.google.com/macros/s/AKfycbyfAJJ-8rmOKcUKPLT3-yvV1V5DIYDL4M_hp6bcDDpXCdfzRc_LAUoGlz8zr6CPfa88/exec';
 
             function jsonpFetch(url, timeoutMs) {
                 return new Promise(function(resolve, reject) {
@@ -106,30 +105,20 @@
                 });
             }
 
-            // Expose for direct use
             window.jsonpFetch = jsonpFetch;
 
-            // Override fetch: intercept Worker API calls with automatic JSONP fallback
+            // Override fetch: GET zahtjevi na GAS idu kroz JSONP
             var _origFetch = window.fetch;
             window.fetch = function(url, options) {
                 var urlStr = typeof url === 'string' ? url : (url && url.url ? url.url : '');
                 var method = (options && options.method || 'GET').toUpperCase();
 
-                // Only intercept GET requests to our Worker
-                if (urlStr.indexOf(WORKER_HOST) === -1 || method === 'POST') {
+                if (urlStr.indexOf(GAS_URL) === -1 || method !== 'GET') {
                     return _origFetch.apply(this, arguments);
                 }
 
-                // Try Worker first, fall back to JSONP on failure
-                return _origFetch.apply(this, arguments).then(function(r) {
-                    if (r.ok) return r;
-                    throw new Error('Worker HTTP ' + r.status);
-                }).catch(function(err) {
-                    console.warn('[API] Worker failed (' + err.message + '), trying JSONP...');
-                    var directUrl = urlStr.replace('https://' + WORKER_HOST, DIRECT_URL);
-                    var isLogin = urlStr.indexOf('path=login') !== -1;
-                    return jsonpFetch(directUrl, isLogin ? 15000 : 30000);
-                });
+                var isLogin = urlStr.indexOf('path=login') !== -1;
+                return jsonpFetch(urlStr, isLogin ? 15000 : 30000);
             };
         })();
 
