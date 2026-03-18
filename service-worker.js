@@ -1,7 +1,7 @@
 // ========== Service Worker - Offline Support ==========
 // Cache static assets, fallback za offline
 
-const CACHE_VERSION = 'v8';
+const CACHE_VERSION = 'v9';
 const CACHE_NAME = `sumarija-cache-${CACHE_VERSION}`;
 
 const STATIC_ASSETS = [
@@ -65,11 +65,9 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // 🚨 BYPASS: Don't intercept Google Apps Script requests
-    // This allows CORS errors to surface properly in the browser console
-    // Remove this bypass after deploying Apps Script with CORS headers
-    if (url.hostname === 'script.google.com') {
-        console.log('[SW] BYPASS: Not intercepting Apps Script request:', url.pathname);
+    // 🚨 BYPASS: Don't intercept Google Apps Script requests (including redirect target)
+    if (url.hostname === 'script.google.com' || url.hostname === 'script.googleusercontent.com') {
+        console.log('[SW] BYPASS: Not intercepting Apps Script request:', url.hostname);
         return; // Let browser handle it directly
     }
 
