@@ -65,8 +65,72 @@
     <script src="js/notifications.js" defer></script>
 
     <script>
-        // API pozivi idu kroz Cloudflare Worker koji dodaje CORS headere
-        // - nema potrebe za JSONP interceptorom
+        // Smart API fetch: Worker first, JSONP fallback to Google Apps Script
+        (function() {
+            var WORKER_HOST = 'sumarijapetrovac.sumarijabosanskipetrovac.workers.dev';
+            var DIRECT_URL = 'https://script.google.com/macros/s/AKfycbyfAJJ-8rmOKcUKPLT3-yvV1V5DIYDL4M_hp6bcDDpXCdfzRc_LAUoGlz8zr6CPfa88/exec';
+
+            function jsonpFetch(url, timeoutMs) {
+                return new Promise(function(resolve, reject) {
+                    var cbName = '_cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+                    var script = document.createElement('script');
+                    var timer = setTimeout(function() {
+                        cleanup();
+                        reject(new Error('Server ne odgovara. Pokušajte ponovo.'));
+                    }, timeoutMs || 30000);
+
+                    function cleanup() {
+                        clearTimeout(timer);
+                        delete window[cbName];
+                        if (script.parentNode) script.parentNode.removeChild(script);
+                    }
+
+                    window[cbName] = function(data) {
+                        cleanup();
+                        resolve({
+                            ok: true, status: 200,
+                            json: function() { return Promise.resolve(data); },
+                            text: function() { return Promise.resolve(JSON.stringify(data)); }
+                        });
+                    };
+
+                    script.onerror = function() {
+                        cleanup();
+                        reject(new Error('Greška u mreži. Provjerite internet vezu.'));
+                    };
+
+                    var sep = url.indexOf('?') !== -1 ? '&' : '?';
+                    script.src = url + sep + 'callback=' + cbName;
+                    document.head.appendChild(script);
+                });
+            }
+
+            // Expose for direct use
+            window.jsonpFetch = jsonpFetch;
+
+            // Override fetch: intercept Worker API calls with automatic JSONP fallback
+            var _origFetch = window.fetch;
+            window.fetch = function(url, options) {
+                var urlStr = typeof url === 'string' ? url : (url && url.url ? url.url : '');
+                var method = (options && options.method || 'GET').toUpperCase();
+
+                // Only intercept GET requests to our Worker
+                if (urlStr.indexOf(WORKER_HOST) === -1 || method === 'POST') {
+                    return _origFetch.apply(this, arguments);
+                }
+
+                // Try Worker first, fall back to JSONP on failure
+                return _origFetch.apply(this, arguments).then(function(r) {
+                    if (r.ok) return r;
+                    throw new Error('Worker HTTP ' + r.status);
+                }).catch(function(err) {
+                    console.warn('[API] Worker failed (' + err.message + '), trying JSONP...');
+                    var directUrl = urlStr.replace('https://' + WORKER_HOST, DIRECT_URL);
+                    var isLogin = urlStr.indexOf('path=login') !== -1;
+                    return jsonpFetch(directUrl, isLogin ? 15000 : 30000);
+                });
+            };
+        })();
 
         let chartJsLoaded = false;
         window.loadChartJs = function() {

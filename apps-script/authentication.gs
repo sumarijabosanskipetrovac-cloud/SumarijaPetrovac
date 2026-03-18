@@ -47,8 +47,19 @@ function verifyUser(username, password) {
 
 // Login handler
 function handleLogin(username, password) {
+  // Check admin credentials first
+  if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+    return createJsonResponse({
+      success: true,
+      username: username,
+      fullName: 'Administrator',
+      role: 'admin',
+      type: 'admin'
+    }, true);
+  }
+
   const ss = SpreadsheetApp.openById(KORISNICI_SPREADSHEET_ID);
-  const usersSheet = ss.getSheetByName('Korisnici'); // Sheet name: "Korisnici"
+  const usersSheet = ss.getSheetByName('Korisnici');
 
   if (!usersSheet) {
     return createJsonResponse({ error: 'Users sheet not found' }, false);
@@ -57,8 +68,7 @@ function handleLogin(username, password) {
   const data = usersSheet.getDataRange().getValues();
 
   // Struktura: A = username, B = password, C = ime_prezime, D = tip (primac/otpremac)
-  for (let i = 1; i < data.length; i++) { // skip header (red 1)
-    // Konverzija password u string za poređenje
+  for (let i = 1; i < data.length; i++) {
     const storedPassword = String(data[i][1]);
     const inputPassword = String(password);
 
@@ -68,8 +78,8 @@ function handleLogin(username, password) {
       return createJsonResponse({
         success: true,
         username: username,
-        fullName: data[i][2], // ime_prezime je već kompletno ime
-        role: 'user', // svi su radnici
+        fullName: data[i][2],
+        role: 'user',
         type: tip || 'Korisnik',
         userType: tip === 'primac' ? 'Primač' : (tip === 'otpremac' ? 'Otpremač' : 'Korisnik')
       }, true);
