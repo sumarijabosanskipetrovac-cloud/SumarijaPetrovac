@@ -56,16 +56,11 @@
             if (contentId) {
                 const el = document.getElementById(contentId);
                 if (el && el.children.length > 0) {
-                    // INSTANT: Uvijek prikaži postojeći DOM odmah (bez loading screen-a)
+                    // INSTANT: Prikaži postojeći DOM odmah - bez loading screen-a
                     document.querySelectorAll('[id$="-content"]').forEach(c => c.classList.add('hidden'));
                     el.classList.remove('hidden');
                     document.getElementById('loading-screen').classList.add('hidden');
-                    // Ako je cache još svjež, ne treba ponovo učitavati
-                    if (lastRender && (Date.now() - lastRender) < ttl) {
-                        return;
-                    }
-                    // Cache je star - osvježi u pozadini bez loading screen-a
-                    // (korisnik već vidi podatke, refresh će ažurirati tiho)
+                    return; // Uvijek vrati - podaci se osvježavaju kroz background sync
                 }
             }
 
