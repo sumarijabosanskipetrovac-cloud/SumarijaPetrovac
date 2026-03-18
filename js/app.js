@@ -54,7 +54,7 @@
             }
         })();
 
-        const API_URL = 'https://sumarijapetrovac.sumarijabosanskipetrovac.workers.dev';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxFn_iXpuyYwDtvIhUcqW1xZKFCRFm8jPyroscK3KXEJy1T0KvnwKJb7UjTTMXmTcoP/exec';
 
         // ========== PERFORMANCE METRICS ==========
         const perfMetrics = {

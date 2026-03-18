@@ -9,7 +9,7 @@
 // API CONFIGURATION
 // ========================================
 
-const API_BASE_URL = 'https://sumarijapetrovac.sumarijabosanskipetrovac.workers.dev';
+const API_BASE_URL = 'https://script.google.com/macros/s/AKfycbxFn_iXpuyYwDtvIhUcqW1xZKFCRFm8jPyroscK3KXEJy1T0KvnwKJb7UjTTMXmTcoP/exec';
 const API_TIMEOUT = 30000; // 30 sekundi
 
 // ========================================
