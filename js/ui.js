@@ -53,14 +53,15 @@
             const ttl = (typeof getSmartCacheTTL === 'function') ? getSmartCacheTTL() : 60000;
             const lastRender = window._tabRenderTime[tab];
             const contentId = tabContentMap[tab];
-            if (contentId) {
+            if (contentId && lastRender) {
                 const el = document.getElementById(contentId);
-                if (el && el.children.length > 0) {
+                if (el) {
                     // INSTANT: Prikaži postojeći DOM odmah - bez loading screen-a
+                    // Ali samo ako je tab ZAISTA renderovan (lastRender postoji)
                     document.querySelectorAll('[id$="-content"]').forEach(c => c.classList.add('hidden'));
                     el.classList.remove('hidden');
                     document.getElementById('loading-screen').classList.add('hidden');
-                    return; // Uvijek vrati - podaci se osvježavaju kroz background sync
+                    return;
                 }
             }
 
